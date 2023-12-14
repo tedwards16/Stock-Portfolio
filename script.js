@@ -21,11 +21,22 @@ class Portfolio extends React.Component {
         }
       ]
     };
+    this.removeStock = this.removeStock.bind(this);
   }
-
-  render() {
+    removeStock(index) {
+      const portfolio = this.state.portfolio.slice(); // shallow copy
+      portfolio.splice(index, 1); // remove value at index
+      this.setState({ portfolio });
+    }
+  
+    render() {
     const { portfolio } = this.state;
 
+    const portfolio_market_value = portfolio.reduce((sum, stock) => stock.shares_owned * stock.market_price + sum, 0);
+    const portfolio_cost = portfolio.reduce((sum, stock) => stock.shares_owned * stock.cost_per_share + sum, 0);
+    const portfolio_gain_loss = portfolio_market_value - portfolio_cost;
+
+    // ...
     return (
       <div className="container">
         <h1 className="text-center my-4">Stock Portfolio</h1>
@@ -63,12 +74,18 @@ class Portfolio extends React.Component {
                       <td><input type="number" name="market_price" value={market_price} /></td>
                       <td>{market_value}</td>
                       <td>{unrealized_gain_loss}</td>
-                      <td><button className="btn btn-light btn-sm">remove</button></td>
+                      <td><button className="btn btn-light btn-sm"  onClick={() => this.removeStock(index)}>remove</button></td>
                     </tr>
                   )
                 })}
               </tbody>
             </table>
+          </div>
+          <div className="col-12 col-md-6">
+            <h4 className="mb-3">Portfolio value: $ {portfolio_market_value}</h4>
+          </div>
+          <div className="col-12 col-md-6">
+            <h4 className="mb-3">Portfolio gain/loss: $ {portfolio_gain_loss}</h4>
           </div>
         </div>
       </div>
